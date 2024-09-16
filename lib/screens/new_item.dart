@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/data/categories.dart';
+import 'package:shopping_list/models/category.dart';
 
 class NewItemScreen extends ConsumerStatefulWidget {
   const NewItemScreen({super.key});
@@ -13,6 +14,21 @@ class NewItemScreen extends ConsumerStatefulWidget {
 }
 
 class _NewItemState extends ConsumerState<NewItemScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  var _enteredName = '';
+  var _enteredQuantity = 1;
+  var _selectedCategory = categories[Categories.fruit]!;
+
+  void _saveItem() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      print(_enteredName);
+      print(_enteredQuantity);
+      print(_selectedCategory.title);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +38,11 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
+                initialValue: _enteredName,
                 maxLength: 50,
                 decoration: const InputDecoration(
                   label: Text('name'),
@@ -38,6 +56,9 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
                   }
                   return null;
                 },
+                onSaved: (value) {
+                  _enteredName = value!;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -48,7 +69,7 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
                         if (value == null ||
                             value.isEmpty ||
                             int.tryParse(value)! <= 0) {
-                          return ("This field can not empty");
+                          return ("This field is invalid");
                         }
                         return null;
                       },
@@ -56,17 +77,19 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
                       decoration: const InputDecoration(
                         label: Text("Quantity"),
                       ),
-                      initialValue: "1",
+                      initialValue: _enteredQuantity.toString(),
+                      onSaved: (newValue) {
+                        _enteredQuantity = int.tryParse(newValue!)!;
+                      },
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField(
-                      
+                      value: _selectedCategory,
                       items: [
                         for (final category in categories.entries)
                           DropdownMenuItem(
-                            
                             value: category.value,
                             child: Row(
                               children: [
@@ -81,8 +104,9 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
                             ),
                           ),
                       ],
-                      onChanged: (value) {},
-                      
+                      onChanged: (value) {
+                        _selectedCategory = value!;
+                      },
                     ),
                   ),
                 ],
@@ -92,11 +116,15 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _formKey.currentState!.reset();
+                    },
                     child: const Text("Reset"),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _saveItem();
+                    },
                     child: const Text('Add item'),
                   )
                 ],
