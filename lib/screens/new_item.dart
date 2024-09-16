@@ -1,8 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/data/categories.dart';
+import 'package:shopping_list/data/dummy_items.dart';
 import 'package:shopping_list/models/category.dart';
+import 'package:shopping_list/models/grocery_item.dart';
+import 'package:shopping_list/providers/grocery_items_provider.dart';
 
 class NewItemScreen extends ConsumerStatefulWidget {
   const NewItemScreen({super.key});
@@ -26,6 +28,21 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
       print(_enteredName);
       print(_enteredQuantity);
       print(_selectedCategory.title);
+
+      var id = String.fromCharCode(groceryItems.last.id.codeUnitAt(0) + 1);
+
+      var item = GroceryItem(
+          id: id,
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory);
+
+
+      var items = ref.read(groceryItemsProvider.notifier);
+      items.addNewGroceryItem(item);
+
+      Navigator.of(context).pop(items) ; 
+
     }
   }
 
