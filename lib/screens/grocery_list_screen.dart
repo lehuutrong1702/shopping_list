@@ -8,7 +8,7 @@ class GroceryListScreen extends StatelessWidget {
 
   void _addItem(BuildContext context) { 
     Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return const NewItemScreen();
+      return  NewItemScreen();
     }));
   }
 
@@ -21,7 +21,7 @@ class GroceryListScreen extends StatelessWidget {
           _addItem(context);
         }, icon: const Icon(Icons.add))],
       ),
-      body: GroceryList(),
+      body: const GroceryList(),
     );
   }
 }

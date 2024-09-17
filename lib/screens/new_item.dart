@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_list/controllers/grocery_items_controller.dart';
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/data/dummy_items.dart';
 import 'package:shopping_list/models/category.dart';
 import 'package:shopping_list/models/grocery_item.dart';
-import 'package:shopping_list/providers/grocery_items_provider.dart';
+
 
 class NewItemScreen extends ConsumerStatefulWidget {
   const NewItemScreen({super.key});
@@ -25,9 +26,7 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_enteredName);
-      print(_enteredQuantity);
-      print(_selectedCategory.title);
+     
 
       var id = String.fromCharCode(groceryItems.last.id.codeUnitAt(0) + 1);
 
@@ -38,10 +37,13 @@ class _NewItemState extends ConsumerState<NewItemScreen> {
           category: _selectedCategory);
 
 
-      var items = ref.read(groceryItemsProvider.notifier);
-      items.addNewGroceryItem(item);
+      var controller = ref.read(groceryItemsControllerProvider);
 
-      Navigator.of(context).pop(items) ; 
+      
+
+      controller.addGrocery(item);
+
+      Navigator.of(context).pop() ; 
 
     }
   }
